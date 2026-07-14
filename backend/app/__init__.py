@@ -14,7 +14,12 @@ def create_app(config_object=Config):
     app.config.from_object(config_object)
     
     
-    CORS(app, resources={r"/api/*": {"origins": app.config["FRONTEND_ORIGIN"]}})
+    allowed_origins = [
+        origin.strip()
+        for origin in app.config["FRONTEND_ORIGIN"].split(",")
+        ]
+
+    CORS(app, resources={r"/api/*": {"origins": allowed_origins}})  
     db.init_app(app)
     migrate.init_app(app, db)
     jwt.init_app(app)
